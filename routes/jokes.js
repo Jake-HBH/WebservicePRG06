@@ -29,13 +29,12 @@ router.post("/", async (req, res) => {
     try {
         const {title, body, author} = req.body;
 
-        const joke = Joke.create({
+        const joke = await Joke.create({
             title: title,
             body: body,
             author: author
         })
-        res.json({});
-
+        res.status(201).json(joke)
     } catch (error) {
         res.json({error: error.message})
     }
