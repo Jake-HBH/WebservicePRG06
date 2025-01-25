@@ -67,19 +67,21 @@ import jokes from "./routes/jokes.js";
 
 const app = express();
 
-// app.use((req, res, next) =>{
-//     res.setHeader('Access-Control-Allow-Origin','*')
-//     res.setHeader('Access-Control-Allow-Origin','*')
-//     next()
-//
-// })
+app.use((req, res, next) =>{
+    res.setHeader('Access-Control-Allow-Origin','*')
+    res.setHeader('Access-Control-Allow-Origin','*')
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    next()
 
-// app.use((req, res, next) => {
-//     if (req.method !== 'OPTIONS' && req.headers.accept !== 'applications/json') {
-//         //WIP
-//     }
-//     next()
-// })
+})
+
+app.use((req, res, next) => {
+    if (req.method !== 'OPTIONS' && req.headers.accept !== 'application/json') {
+        return res.status(406).json({ error: 'Only requests with "Accept: application/json" are allowed' });
+    }
+    next();
+});
+
 
 mongoose.connect('mongodb://127.0.0.1:27017/prg-06-db');
 

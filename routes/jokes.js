@@ -25,9 +25,27 @@ router.get("/", async (req, res) => {
     }
 })
 
+router.get("/test",  (req, res, next) => {
+    res.json("HELLO")
+});
+
 router.post("/", async (req, res) => {
     try {
-        const {title, body, author} = req.body;
+        const {title, body, author, amount, method, replace} = req.body;
+
+        if (method === "SEED") {
+            if (replace) {
+                await Joke.deleteMany({});
+            }
+            for (let i = 0; i < amount; i++) {
+                await Joke.create({
+                    title: faker.word.verb(),
+                    body: faker.lorem.paragraphs(),
+                    author: faker.person.fullName(),
+                });
+            }
+            return res.status(201).json({success: true})
+        }
 
         const joke = await Joke.create({
             title: title,
@@ -42,12 +60,14 @@ router.post("/", async (req, res) => {
     // console.log(title, body, author);
 })
 
-router.options("/", (req, res) => {
+
+
+router.options("/", (req, res, next) => {
     res.setHeader('Allow', 'GET, POST');
     res.send();
 })
 
-router.options("/:id", (req, res) => {
+router.options("/:id", (req, res, next) => {
     res.setHeader('Allow', 'GET, PUT, DELETE');
     res.send();
 })
@@ -58,23 +78,34 @@ router.get("/:id", async (req, res) => {
     res.json(joke)
 })
 
-router.post("/seed", async (req, res) => {
+router.put("/:id", async (req, res) => {
     try {
-        const {amount} = req.body;
+        const { id } = req.params;
 
-        await Joke.deleteMany({});
-
-        for (let i = 0; i < amount; i++) {
-            await Joke.create({
-                title: faker.word.verb(),
-                body: faker.lorem.paragraphs(),
-                author: faker.person.fullName(),
-            });
-        }
-        res.json({success: true})
+        const updatedJoke = await Joke.findByIdAndUpdate(id, req.body, { new : true});
+        res.status(201).json(updatedJoke)
     } catch (error) {
-        res.json({error: error.message})
+        res.status(204).json({ error: error.message });
     }
+
+
 })
+
+router.delete("/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const deletedJoke = await Joke.findByIdAndDelete(id);
+
+        if (!deletedJoke) {
+            return res.status(404).json({ error: "Joke not found" });
+        }
+
+        res.status(204).send(); // No content in the response
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 
 export default router;
