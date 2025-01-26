@@ -36,9 +36,9 @@ router.post("/", async (req, res) => {
             }
             for (let i = 0; i < amount; i++) {
                 await Joke.create({
-                    title: faker.word.verb(),
-                    body: faker.lorem.paragraphs(),
-                    author: faker.person.fullName(),
+                    title: faker.word.words({ count: { min: 3, max: 6 } }),
+                    body: faker.lorem.paragraphs({ min: 1, max: 2 }),
+                    author: faker.internet.username(),
                 });
             }
             return res.status(201).json({ success: true });
