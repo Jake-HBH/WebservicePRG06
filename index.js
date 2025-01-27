@@ -1,7 +1,6 @@
 import express from 'express';
 import mongoose from "mongoose";
 import jokes from "./routes/jokes.js";
-import router from "./routes/jokes.js";
 
 const app = express();
 
