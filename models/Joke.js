@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const jokeSchema = new mongoose.Schema({
     title: { type: String, required: true },
-    body: { type: String, required: true },
+    description: { type: String, required: true },
     author: { type: String, required: true }
 }, {
     toJSON: {
